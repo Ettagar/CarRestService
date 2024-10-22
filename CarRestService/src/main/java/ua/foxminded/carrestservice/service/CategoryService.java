@@ -16,7 +16,7 @@ import ua.foxminded.carrestservice.repository.CategoriesRepository;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CategoriesService {
+public class CategoryService {
 	private final CategoriesRepository categoriesRepository;
 
 	@Transactional
@@ -28,8 +28,7 @@ public class CategoriesService {
 				return existingCategory.get();
 			}
 
-			Category newCategory = new Category();
-			newCategory.setName(categoryName);
+			Category newCategory = Category.builder().name(categoryName).build();
 			return categoriesRepository.save(newCategory);
 		} catch (Exception e) {
 			log.error("An error occurred while finding or creating the category", e);

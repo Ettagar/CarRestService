@@ -1,7 +1,6 @@
 package ua.foxminded.carrestservice.model;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -14,15 +13,15 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "cars")
 public class Car {
 
@@ -30,7 +29,8 @@ public class Car {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "make", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "make", referencedColumnName = "id",
+    		nullable = false)
     private Manufacturer manufacturer;
 
     @Column(nullable = false)
@@ -42,15 +42,8 @@ public class Car {
     @ManyToMany(fetch = FetchType.LAZY,
                 cascade = { CascadeType.DETACH, CascadeType.MERGE,
                             CascadeType.PERSIST, CascadeType.REFRESH })
-    @JoinTable(name = "cars_categories", joinColumns = @JoinColumn(name = "car_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JoinTable(name = "cars_categories",
+    			joinColumns = @JoinColumn(name = "car_id"),
+    			inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
-
-    @Override
-    public String toString() {
-        String categoryNames = categories.stream()
-                .map(Category::getName)
-                .collect(Collectors.joining(", "));
-
-        return String.format("%s %s %d [%s]", manufacturer.getName(), model, year, categoryNames);
-    }
 }

@@ -9,5 +9,4 @@ class CarRestServiceApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

@@ -17,33 +17,37 @@ public class CarTestData {
 
 	public void setUp() {
 
-		Car car1 = new Car();
-		car1.setId("123456789A");
-		car1.setManufacturer(manufacturerTestData.getManufacturers().get(0));
-		car1.setModel("Q3");
-		car1.setYear(2020);
-		car1.setCategories(Arrays.asList(categoriesTestData.getCategories().get(0)));
+		Car car1 = Car.builder()
+		.id("123456789A")
+		.manufacturer(manufacturerTestData.getManufacturers().get(0))
+		.model("Q3")
+		.year(2020)
+		.categories(Arrays.asList(categoriesTestData.getCategories().get(0)))
+		.build();
 
-		Car car2 = new Car();
-		car2.setId("123456789B");
-		car2.setManufacturer(manufacturerTestData.getManufacturers().get(1));
-		car2.setModel("CX-5");
-		car2.setYear(2022);
-		car2.setCategories(Arrays.asList(categoriesTestData.getCategories().get(0)));
+		Car car2 = Car.builder()
+		.id("123456789B")
+		.manufacturer(manufacturerTestData.getManufacturers().get(1))
+		.model("CX-5")
+		.year(2022)
+		.categories(Arrays.asList(categoriesTestData.getCategories().get(0)))
+		.build();
 
-		Car car3 = new Car();
-		car3.setId("123456789C");
-		car3.setManufacturer(manufacturerTestData.getManufacturers().get(2));
-		car3.setModel("Jetta");
-		car3.setYear(2024);
-		car3.setCategories(Arrays.asList(categoriesTestData.getCategories().get(1)));
+		Car car3 = Car.builder()
+		.id("123456789C")
+		.manufacturer(manufacturerTestData.getManufacturers().get(2))
+		.model("Jetta")
+		.year(2024)
+		.categories(Arrays.asList(categoriesTestData.getCategories().get(1)))
+		.build();
 
-		Car car4 = new Car();
-		car4.setId("123456789D");
-		car4.setManufacturer(manufacturerTestData.getManufacturers().get(0));
-		car4.setModel("A6");
-		car4.setYear(2024);
-		car4.setCategories(Arrays.asList(categoriesTestData.getCategories().get(1)));
+		Car car4 = Car.builder()
+		.id("123456789D")
+		.manufacturer(manufacturerTestData.getManufacturers().get(0))
+		.model("A6")
+		.year(2024)
+		.categories(Arrays.asList(categoriesTestData.getCategories().get(1)))
+		.build();
 
 		cars = Arrays.asList(car1, car2, car3, car4);
 	}

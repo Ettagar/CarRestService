@@ -13,17 +13,17 @@ import ua.foxminded.carrestservice.model.dto.CarDto;
 public interface CarService {
 	Optional<Car> findById(String id);
 
-	Optional<Car> findOneCar(CarSearchCriteria criteria);
+	Optional<CarDto> findOneCar(CarSearchCriteria criteria);
 
-	Page<Car> findAllCarsByCriteria(CarSearchCriteria criteria, Pageable pageable);
+	Page<CarDto> findAllCarsByCriteria(CarSearchCriteria criteria, Pageable pageable);
 
 	Car createCar(Car car);
 
-	List<Car> createCars(List<Car> cars);
+	List<CarDto> createCars(List<Car> cars);
 
-	Car createCar(String manufacturerName, String model, Integer year, List<String> category);
+	CarDto createCar(String manufacturerName, String model, Integer year, List<String> category);
 
-	Car updateCar(CarDto existingCar, CarDto updatedCar);
+	CarDto updateCar(CarDto existingCar, CarDto updatedCar);
 
 	void deleteCars(String manufacturer, String model, Integer year);
 }

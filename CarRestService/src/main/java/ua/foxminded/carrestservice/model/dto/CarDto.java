@@ -26,4 +26,12 @@ public record CarDto (
 	@Size(min = 1, message = "At least one category is required")
 	List<String> categories
 ) {
+	public CarDto(
+			@NotBlank(message = "Manufacturer is required") String manufacturer,
+			@NotBlank(message = "Model is required") String model,
+			@NotNull(message = "Year is required") Integer year,
+			@Size(min = 1, message = "At least one category is required") List<String> categories) {
+
+		this(null, manufacturer, model, year, categories);
+	}
 }

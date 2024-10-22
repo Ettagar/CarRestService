@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -22,11 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ua.foxminded.carrestservice.mapper.CarMapper;
-import ua.foxminded.carrestservice.mapper.ManufacturerMapper;
-import ua.foxminded.carrestservice.model.Car;
+import ua.foxminded.carrestservice.exception.manufacturer.ManufacturerAlreadyExistsException;
 import ua.foxminded.carrestservice.model.CarSearchCriteria;
-import ua.foxminded.carrestservice.model.Manufacturer;
 import ua.foxminded.carrestservice.model.dto.CarDto;
 import ua.foxminded.carrestservice.model.dto.ManufacturerDto;
 import ua.foxminded.carrestservice.service.CarService;
@@ -39,28 +35,25 @@ import ua.foxminded.carrestservice.service.ManufacturerService;
 public class ManufacturerController {
 	private final ManufacturerService manufacturerService;
 	private final CarService carService;
-	private final ManufacturerMapper manufacturerMapper;
-	private final CarMapper carMapper;
 
 	@GetMapping
-	public ResponseEntity<Page<Manufacturer>> getAllManufacturers(
+	public ResponseEntity<Page<ManufacturerDto>> getAllManufacturers(
 			@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
 
-		Page<Manufacturer> manufacturers = manufacturerService.findAll(pageable);
-
-		return ResponseEntity.ok(manufacturers);
+		return ResponseEntity.ok(manufacturerService.findAll(pageable));
 	}
 
 	@PostMapping
 	public ResponseEntity<ManufacturerDto> createManufacturer(
 			@RequestParam(required = true)  String manufacturerName) {
 
-		Manufacturer manufacturer = manufacturerService.create(manufacturerName);
-		log.info("Succesfully created manufacturer with name: " + manufacturerName);
-		ManufacturerDto createdManufacturer =
-				manufacturerMapper.toDto(manufacturer);
+		if (manufacturerService.findManufacturerByName(manufacturerName).isPresent()) {
+			throw new ManufacturerAlreadyExistsException("Manufacturer '" + manufacturerName + "' already exist");
+		}
+		ManufacturerDto manufacturer = manufacturerService.create(manufacturerName);
+		log.info("Succesfully created manufacturer with name: %S", manufacturerName);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdManufacturer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(manufacturer);
 	}
 
 	@PutMapping("/{manufacturerName}")
@@ -68,8 +61,8 @@ public class ManufacturerController {
 			@PathVariable String manufacturerName,
 			@RequestParam(required = true) String manufacturerNewName) {
 
-		ManufacturerDto updatedManufacturer =
-				manufacturerMapper.toDto(manufacturerService.updateName(manufacturerName, manufacturerNewName));
+		ManufacturerDto updatedManufacturer = manufacturerService.updateName(manufacturerName, manufacturerNewName);
+		log.info("Succesfully updated manufacturer %S with name: %S", manufacturerName, manufacturerNewName);
 
 		return ResponseEntity.ok(updatedManufacturer);
 	}
@@ -79,6 +72,7 @@ public class ManufacturerController {
 			@PathVariable String manufacturerName) {
 
 		manufacturerService.delete(manufacturerName);
+		log.info("Manufacturer %S deleted successfully", manufacturerName);
 
 		return ResponseEntity.ok("Manufacturer '" + manufacturerName + "' deleted successfully");
 	}
@@ -92,11 +86,9 @@ public class ManufacturerController {
                 .manufacturer(manufacturer)
                 .build();
 
-        Page<Car> carPage = carService.findAllCarsByCriteria(criteria, pageable);
-        List<CarDto> carDtos = carMapper.toDto(carPage.getContent());
+        Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
 
-        return ResponseEntity
-        		.ok(new PageImpl<>(carDtos, pageable, carPage.getTotalElements()));
+        return ResponseEntity.ok(carPage);
 	}
 
 	@PostMapping("/{manufacturer}/models")
@@ -106,9 +98,9 @@ public class ManufacturerController {
 			@RequestParam(required = true) Integer year,
 			@RequestParam(required = true) List<String> categories) {
 
-		Car createdCar = carService.createCar(manufacturer, model, year, categories);
+		CarDto createdCar = carService.createCar(manufacturer, model, year, categories);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(carMapper.toDto(createdCar));
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdCar);
 	}
 
 	@GetMapping("/{manufacturer}/models/{model}")
@@ -122,10 +114,9 @@ public class ManufacturerController {
 	                .model(model)
 	                .build();
 
-        Page<Car> carPage = carService.findAllCarsByCriteria(criteria, pageable);
-        List<CarDto> carDtos = carMapper.toDto(carPage.getContent());
+        Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
 
-        return ResponseEntity.ok(new PageImpl<>(carDtos, pageable, carPage.getTotalElements()));
+        return ResponseEntity.ok(carPage);
 	}
 
 	@GetMapping("/{manufacturer}/models/{model}/{year}")
@@ -142,10 +133,9 @@ public class ManufacturerController {
 	                .maxYear(year)
 	                .build();
 
-        Page<Car> carPage = carService.findAllCarsByCriteria(criteria, pageable);
-        List<CarDto> carDtos = carMapper.toDto(carPage.getContent());
+        Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
 
-        return ResponseEntity.ok(new PageImpl<>(carDtos, pageable, carPage.getTotalElements()));
+        return ResponseEntity.ok(carPage);
 	}
 
 	@PostMapping("/{manufacturer}/models/{model}/{year}")
@@ -156,10 +146,9 @@ public class ManufacturerController {
 			@RequestParam List<String> categories
 			) {
 
-		 Car newCar = carService.createCar(manufacturer, model, year, categories);
-		 CarDto createdCar = carMapper.toDto(newCar);
+		 CarDto newCar = carService.createCar(manufacturer, model, year, categories);
 
-		 return ResponseEntity.status(HttpStatus.CREATED).body(createdCar);
+		 return ResponseEntity.status(HttpStatus.CREATED).body(newCar);
 	}
 
 	@PatchMapping("/{manufacturer}/models/{model}/{year}")
@@ -173,22 +162,25 @@ public class ManufacturerController {
 			@RequestParam(required = false) List<String> newCategories
 			) {
 
-		CarDto existingCarDto = new CarDto ("", manufacturer, model, year, Collections.emptyList());
-		CarDto updatedCarDto = new CarDto("", newManufacturer, newModel, newYear, newCategories);
-	    CarDto patchedCar = carMapper.toDto(carService.updateCar(existingCarDto, updatedCarDto));
+		CarDto existingCarDto = new CarDto (manufacturer, model, year, Collections.emptyList());
+		log.info("Controller existingCarDto:" + existingCarDto);
+		CarDto updatedCarDto = new CarDto (newManufacturer, newModel, newYear, newCategories);
+		log.info("Controller updatedCarDto:" + updatedCarDto);
+	    CarDto patchedCar = carService.updateCar(existingCarDto, updatedCarDto);
+	    log.info("Controller patchedCar:" + patchedCar);
+
 	    return ResponseEntity.ok(patchedCar);
 	}
 
 
 	@DeleteMapping("/{manufacturer}/models/{model}/{year}")
-	public ResponseEntity<String> deleteCar(
-			@PathVariable String manufacturer,
-			@PathVariable String model,
-			@PathVariable int year) {
+	public ResponseEntity<Void> deleteCar(
+	        @PathVariable String manufacturer,
+	        @PathVariable String model,
+	        @PathVariable int year) {
 
-		carService.deleteCars(manufacturer, model, year);
+	    carService.deleteCars(manufacturer, model, year);
 
-		return ResponseEntity.ok(manufacturer + model + year
-					+ "' was deleted successfully");
+	    return ResponseEntity.noContent().build();
 	}
 }

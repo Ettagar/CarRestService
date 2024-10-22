@@ -21,21 +21,19 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.foxminded.carrestservice.mapper.CarMapper;
-import ua.foxminded.carrestservice.model.Car;
+import ua.foxminded.carrestservice.mapper.CarMapperImpl;
 import ua.foxminded.carrestservice.model.CarSearchCriteria;
 import ua.foxminded.carrestservice.model.dto.CarDto;
 import ua.foxminded.carrestservice.service.CarService;
 import ua.foxminded.carrestservice.util.ApplicationTestData;
 
-@ActiveProfiles("test")
-@WebMvcTest(CarController.class)
-@Import({CarMapper.class, ApplicationTestData.class})
+@WebMvcTest(controllers = CarController.class)
+@Import({ApplicationTestData.class, CarMapperImpl.class})
 class CarControllerTest {
 	private static final String END_POINT_PATH = ("/api/v1/cars");
 	private static final Integer PAGE_NUMBER = 0;
@@ -45,19 +43,19 @@ class CarControllerTest {
 	private MockMvc mockMvc;
 
 	@Autowired
+	private ApplicationTestData testData;
+
+	@Autowired
 	private CarMapper carMapper;
 
 	@Autowired
-	private ApplicationTestData testData;
+	private ObjectMapper objectMapper;
 
 	@MockBean
 	private CarService carService;
 
-	private ObjectMapper objectMapper = new ObjectMapper();
-
 	@BeforeEach
 	public void setUp() {
-		testData = new ApplicationTestData();
 		testData.setUp();
 	}
 
@@ -65,11 +63,12 @@ class CarControllerTest {
 	void testSearchAllCars() throws Exception {
 		Sort sort = Sort.by(Sort.Direction.ASC, "model");
 		Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE, sort);
+		List<CarDto> carDtos = carMapper.toDtoList(testData.getCars());
 
 		when(carService.findAllCarsByCriteria(any(CarSearchCriteria.class), eq(pageable)))
-				.thenReturn(new PageImpl<>(testData.getCars(), pageable, testData.getCars().size()));
+				.thenReturn(new PageImpl<>(carDtos, pageable, carDtos.size()));
 
-		List<CarDto> carDtos = carMapper.toDto(testData.getCars());
+
 		Page<CarDto> expectedPage = new PageImpl<>(carDtos, pageable, carDtos.size());
 		String expectedJson = objectMapper.writeValueAsString(expectedPage);
 
@@ -91,16 +90,16 @@ class CarControllerTest {
 		Sort sort = Sort.by(Sort.Direction.ASC, "model");
 		Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE, sort);
 
-		List<Car> cars = testData.getCars().stream()
-				.filter(car -> car.getManufacturer().getName().equals(manufacturer)
+		List<CarDto> cars = carMapper.toDtoList(
+				testData.getCars().stream()
+					.filter(car -> car.getManufacturer().getName().equals(manufacturer)
 								&& car.getYear() <= maxYear)
-				.collect(Collectors.toList());
+					.collect(Collectors.toList())
+		);
+		Page<CarDto> expectedPage = new PageImpl<>(cars, pageable, cars.size());
 
 		when(carService.findAllCarsByCriteria(any(CarSearchCriteria.class), eq(pageable)))
-				.thenReturn(new PageImpl<>(cars, pageable, cars.size()));
-
-		List<CarDto> carDtos = carMapper.toDto(cars);
-		Page<CarDto> expectedPage = new PageImpl<>(carDtos, pageable, carDtos.size());
+				.thenReturn(expectedPage);
 		String expectedJson = objectMapper.writeValueAsString(expectedPage);
 
 		mockMvc.perform(get(END_POINT_PATH)

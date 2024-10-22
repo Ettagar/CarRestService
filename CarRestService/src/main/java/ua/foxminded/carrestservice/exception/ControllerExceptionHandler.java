@@ -22,108 +22,74 @@ import ua.foxminded.carrestservice.exception.manufacturer.ManufacturerNotFoundEx
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
+
 	@ExceptionHandler(ManufacturerAlreadyExistsException.class)
 	public ResponseEntity<Map<String, Object>> handleManufacturerAlreadyExists(ManufacturerAlreadyExistsException ex,
 			WebRequest request) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.CONFLICT.value());
-		body.put("error", "Conflict");
-		body.put("message", ex.getMessage());
-		body.put("path", request.getDescription(false));
-
-		return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+		return buildResponseEntity(HttpStatus.CONFLICT, "Conflict", ex.getMessage(), request);
 	}
 
 	@ExceptionHandler(ManufacturerInvalidException.class)
 	public ResponseEntity<Map<String, Object>> handleInvalidManufacturer(ManufacturerInvalidException ex,
 			WebRequest request) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.BAD_REQUEST.value());
-		body.put("error", "Bad Request");
-		body.put("message", ex.getMessage());
-		body.put("path", request.getDescription(false));
-
-		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+		return buildResponseEntity(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage(), request);
 	}
 
 	@ExceptionHandler(ManufacturerNotFoundException.class)
-	public ResponseEntity<Map<String, Object>> handleManufacturerDoesNotExists(ManufacturerNotFoundException ex,
+	public ResponseEntity<Map<String, Object>> handleManufacturerNotFound(ManufacturerNotFoundException ex,
 			WebRequest request) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.NOT_FOUND.value());
-		body.put("error", "Not Found");
-		body.put("message", ex.getMessage());
-		body.put("path", request.getDescription(false));
-
-		return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+		return buildResponseEntity(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
 	}
 
 	@ExceptionHandler(CarNotFoundException.class)
 	public ResponseEntity<Map<String, Object>> handleCarNotFoundException(CarNotFoundException ex, WebRequest request) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.NOT_FOUND.value());
-		body.put("error", "Not Found");
-		body.put("message", ex.getMessage());
-		body.put("path", request.getDescription(false));
-
-		return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+		return buildResponseEntity(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
 	}
 
 	@ExceptionHandler(CarAlreadyExistsException.class)
-	public ResponseEntity<Map<String, Object>> handleDuplicateCarException(CarAlreadyExistsException ex,
+	public ResponseEntity<Map<String, Object>> handleCarAlreadyExistsException(CarAlreadyExistsException ex,
 			WebRequest request) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.CONFLICT.value());
-		body.put("error", "Conflict");
-		body.put("message", ex.getMessage());
-		body.put("path", request.getDescription(false));
-
-		return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+		return buildResponseEntity(HttpStatus.CONFLICT, "Conflict", ex.getMessage(), request);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();
-		ex.getBindingResult().getFieldErrors()
-				.forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+	    ex.getBindingResult().getFieldErrors()
+	        .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.BAD_REQUEST.value());
-		body.put("error", "Validation Failed");
-		body.put("message", "Invalid input");
-		body.put("errors", errors);
+	    Map<String, Object> body = new LinkedHashMap<>();
+	    body.put("timestamp", LocalDateTime.now());
+	    body.put("status", HttpStatus.BAD_REQUEST.value());
+	    body.put("error", "Validation Failed");
+	    body.put("message", "Invalid input");
+	    body.put("errors", errors);
 
-		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+	    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	public ResponseEntity<Map<String, Object>> handleMissingServletRequestParameterException(
 			MissingServletRequestParameterException ex, WebRequest request) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.BAD_REQUEST.value());
-		body.put("error", "Bad Request");
-		body.put("message", String.format("The required parameter '%s' is missing.", ex.getParameterName()));
-		body.put("path", request.getDescription(false));
-
-		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+		return buildResponseEntity(HttpStatus.BAD_REQUEST, "Bad Request",
+				String.format("The required parameter '%s' is missing.", ex.getParameterName()), request);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Map<String, Object>> handleGlobalException(Exception ex, WebRequest request) {
+		return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error",
+				"An unexpected error occurred.", request);
+	}
+
+	private ResponseEntity<Map<String, Object>> buildResponseEntity(HttpStatus status, String error, String message,
+			WebRequest request) {
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-		body.put("error", "Internal Server Error");
-		body.put("message", "An unexpected error occurred.");
+		body.put("status", status.value());
+		body.put("error", error);
+		body.put("message", message);
 		body.put("path", request.getDescription(false));
 
-		return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(body, status);
 	}
 }

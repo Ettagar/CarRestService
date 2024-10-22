@@ -28,7 +28,7 @@ public class CarCatalogParserService {
 	private String fileName;
 
 	private final ManufacturerServiceImpl manufacturerService;
-	private final CategoriesService categoriesService;
+	private final CategoryService categoryService;
 	private final CarServiceImpl carServiceImpl;
 
 	@Transactional
@@ -41,10 +41,8 @@ public class CarCatalogParserService {
                 String[] recordLine = records.get(i);
                 Car car = new Car();
                 car.setId(recordLine[0]);
-                car.setManufacturer(
-                	    manufacturerService.findManufacturerByName(recordLine[1])
-                	    .orElseGet(() -> manufacturerService.create(recordLine[1]))
-                );
+        		manufacturerService.create(recordLine[1]);
+        		car.setManufacturer(manufacturerService.findManufacturerByName(recordLine[1]).get());
                 car.setYear(Integer.parseInt(recordLine[2]));
                 car.setModel(recordLine[3]);
 
@@ -52,16 +50,16 @@ public class CarCatalogParserService {
                 List<Category> categories = new ArrayList<>();
                 for (String categoryName : categoriesArray) {
                 	categoryName = categoryName.replaceAll("\\d", "");
-                	Optional<Category> category = categoriesService.findByName(categoryName);
+                	Optional<Category> category = categoryService.findByName(categoryName);
                 		if (category.isEmpty()) {
-                			category = Optional.of(categoriesService.createCategory(categoryName));
+                			category = Optional.of(categoryService.createCategory(categoryName));
                 		}
                     categories.add(category.get());
                 }
                 car.setCategories(categories);
 
                 cars.add(car);
-                log.info("Parsed: " + car.toString());
+                log.info("Parsed: {}", car);
             }
         } catch (Exception e ) {
             e.printStackTrace();

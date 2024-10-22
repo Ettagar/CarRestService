@@ -11,13 +11,15 @@ public class CategoriesTestData {
 	private List<Category> categories;
 
 	public void setUp() {
-		Category category1 = new Category();
-		category1.setId(1L);
-		category1.setName("SUV");
+		Category category1 = Category.builder()
+		.id(1L)
+		.name("SUV")
+		.build();
 
-		Category category2 = new Category();
-		category2.setId(2L);
-		category2.setName("Sedan");
+		Category category2 = Category.builder()
+		.id(2L)
+		.name("Sedan")
+		.build();
 
 		categories = Arrays.asList(category1, category2);
 	}

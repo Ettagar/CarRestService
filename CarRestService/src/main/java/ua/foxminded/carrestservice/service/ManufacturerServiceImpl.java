@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ua.foxminded.carrestservice.exception.manufacturer.ManufacturerAlreadyExistsException;
 import ua.foxminded.carrestservice.exception.manufacturer.ManufacturerInvalidException;
 import ua.foxminded.carrestservice.exception.manufacturer.ManufacturerNotFoundException;
+import ua.foxminded.carrestservice.mapper.ManufacturerMapper;
+import ua.foxminded.carrestservice.mapper.PageMapper;
 import ua.foxminded.carrestservice.model.Manufacturer;
+import ua.foxminded.carrestservice.model.dto.ManufacturerDto;
 import ua.foxminded.carrestservice.repository.ManufacturerRepository;
 
 @Slf4j
@@ -20,30 +22,32 @@ import ua.foxminded.carrestservice.repository.ManufacturerRepository;
 @RequiredArgsConstructor
 public class ManufacturerServiceImpl implements ManufacturerService {
 	private final ManufacturerRepository manufacturerRepository;
+	private final ManufacturerMapper manufacturerMapper;
 
 	@Override
 	@Transactional
-	public Manufacturer create(String manufacturerName) {
+	public ManufacturerDto create(String manufacturerName) {
 		validateManufacturerName(manufacturerName);
 
 		Optional<Manufacturer> existingManufacturer = findManufacturerByName(manufacturerName);
 
 		if (existingManufacturer.isPresent()) {
-			throw new ManufacturerAlreadyExistsException(
-					"Manufacturer already exists with name: " + manufacturerName);
+			return manufacturerMapper.toDto(existingManufacturer.get());
 		}
 
 		Manufacturer newManufacturer = new Manufacturer();
 		newManufacturer.setName(manufacturerName);
 
-		return manufacturerRepository.save(newManufacturer);
+		return manufacturerMapper.toDto(manufacturerRepository.save(newManufacturer));
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Manufacturer> findAll(Pageable pageable) {
+	public Page<ManufacturerDto> findAll(Pageable pageable) {
 
-		return manufacturerRepository.findAll(pageable);
+		return PageMapper.mapEntityPageToDtoPage(
+				manufacturerRepository.findAll(pageable),
+				manufacturerMapper::toDto);
 	}
 
 	@Override
@@ -56,7 +60,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
 	@Override
 	@Transactional
-	public Manufacturer updateName(String manufacturerName, String manufacturerNewName) {
+	public ManufacturerDto updateName(String manufacturerName, String manufacturerNewName) {
 
 		Manufacturer manufacturer = manufacturerRepository.findByName(manufacturerName)
 	            .orElseThrow(() -> new ManufacturerNotFoundException("Manufacturer does not exists with name: " + manufacturerName));
@@ -64,7 +68,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 		validateManufacturerName(manufacturerNewName);
 		manufacturer.setName(manufacturerNewName);
 
-		return manufacturerRepository.save(manufacturer);
+		return manufacturerMapper.toDto(manufacturerRepository.save(manufacturer));
 	}
 
 	@Override
@@ -78,13 +82,13 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
 	}
 
-	 private void validateManufacturerName(String manufacturerName) {
-	        if (manufacturerName == null || manufacturerName.trim().isEmpty()) {
-	            throw new ManufacturerInvalidException("Manufacturer name cannot be empty.");
-	        }
+	private void validateManufacturerName(String manufacturerName) {
+		if (manufacturerName == null || manufacturerName.trim().isEmpty()) {
+			throw new ManufacturerInvalidException("Manufacturer name cannot be empty.");
+		}
 
-	        if (manufacturerName.length() > 40) {
-	            throw new ManufacturerInvalidException("Manufacturer name cannot be longer than 40 characters.");
-	        }
-	    }
+		if (manufacturerName.length() > 40) {
+			throw new ManufacturerInvalidException("Manufacturer name cannot be longer than 40 characters.");
+		}
+	}
 }
