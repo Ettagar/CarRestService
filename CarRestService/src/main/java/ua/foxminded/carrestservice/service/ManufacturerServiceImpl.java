@@ -63,7 +63,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 	public ManufacturerDto updateName(String manufacturerName, String manufacturerNewName) {
 
 		Manufacturer manufacturer = manufacturerRepository.findByName(manufacturerName)
-	            .orElseThrow(() -> new ManufacturerNotFoundException("Manufacturer does not exists with name: " + manufacturerName));
+				.orElseThrow(() -> new ManufacturerNotFoundException("Manufacturer does not exists with name: " + manufacturerName));
 
 		validateManufacturerName(manufacturerNewName);
 		manufacturer.setName(manufacturerNewName);
@@ -76,9 +76,9 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 		validateManufacturerName(manufacturerName);
 
 		Manufacturer manufacturer = manufacturerRepository.findByName(manufacturerName)
-	            .orElseThrow(() -> new ManufacturerNotFoundException("Manufacturer does not exists with name: " + manufacturerName));
+				.orElseThrow(() -> new ManufacturerNotFoundException("Manufacturer does not exists with name: " + manufacturerName));
 
-	    manufacturerRepository.delete(manufacturer);
+		manufacturerRepository.delete(manufacturer);
 
 	}
 

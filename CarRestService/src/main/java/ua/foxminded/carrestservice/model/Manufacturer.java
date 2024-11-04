@@ -32,10 +32,10 @@ public class Manufacturer {
 	private Long id;
 
 	@NonNull
-    @Column(unique = true, nullable = false)
-    private String name;
+	@Column(unique = true, nullable = false)
+	private String name;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Car> cars;
+	@JsonIgnore
+	@OneToMany(mappedBy = "manufacturer", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Car> cars;
 }

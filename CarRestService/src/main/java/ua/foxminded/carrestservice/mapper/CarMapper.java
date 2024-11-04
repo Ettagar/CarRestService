@@ -23,5 +23,5 @@ public interface CarMapper {
 	default List<String> mapCategoriesToStrings(List<Category> categories) {
 
 		return categories.stream().map(Category::getName).collect(Collectors.toList());
-    }
+	}
 }

@@ -53,7 +53,7 @@ public class ManufacturerController {
 		ManufacturerDto manufacturer = manufacturerService.create(manufacturerName);
 		log.info("Succesfully created manufacturer with name: %S", manufacturerName);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(manufacturer);
+		return ResponseEntity.status(HttpStatus.CREATED).body(manufacturer);
 	}
 
 	@PutMapping("/{manufacturerName}")
@@ -83,12 +83,12 @@ public class ManufacturerController {
 			@PageableDefault(sort = "model", direction = Sort.Direction.ASC) Pageable pageable) {
 
 		CarSearchCriteria criteria = CarSearchCriteria.builder()
-                .manufacturer(manufacturer)
-                .build();
+				.manufacturer(manufacturer)
+				.build();
 
-        Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
+		Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
 
-        return ResponseEntity.ok(carPage);
+		return ResponseEntity.ok(carPage);
 	}
 
 	@PostMapping("/{manufacturer}/models")
@@ -110,13 +110,13 @@ public class ManufacturerController {
 			@PageableDefault(sort = "year", direction = Sort.Direction.ASC) Pageable pageable) {
 
 		CarSearchCriteria criteria = CarSearchCriteria.builder()
-					.manufacturer(manufacturer)
-	                .model(model)
-	                .build();
+				.manufacturer(manufacturer)
+				.model(model)
+				.build();
 
-        Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
+		Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
 
-        return ResponseEntity.ok(carPage);
+		return ResponseEntity.ok(carPage);
 	}
 
 	@GetMapping("/{manufacturer}/models/{model}/{year}")
@@ -127,15 +127,15 @@ public class ManufacturerController {
 			@PageableDefault(sort = "year", direction = Sort.Direction.ASC) Pageable pageable) {
 
 		CarSearchCriteria criteria = CarSearchCriteria.builder()
-	                .manufacturer(manufacturer)
-	                .model(model)
-	                .minYear(year)
-	                .maxYear(year)
-	                .build();
+				.manufacturer(manufacturer)
+				.model(model)
+				.minYear(year)
+				.maxYear(year)
+				.build();
 
-        Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
+		Page<CarDto> carPage = carService.findAllCarsByCriteria(criteria, pageable);
 
-        return ResponseEntity.ok(carPage);
+		return ResponseEntity.ok(carPage);
 	}
 
 	@PostMapping("/{manufacturer}/models/{model}/{year}")
@@ -146,9 +146,9 @@ public class ManufacturerController {
 			@RequestParam List<String> categories
 			) {
 
-		 CarDto newCar = carService.createCar(manufacturer, model, year, categories);
+		CarDto newCar = carService.createCar(manufacturer, model, year, categories);
 
-		 return ResponseEntity.status(HttpStatus.CREATED).body(newCar);
+		return ResponseEntity.status(HttpStatus.CREATED).body(newCar);
 	}
 
 	@PatchMapping("/{manufacturer}/models/{model}/{year}")
@@ -166,21 +166,21 @@ public class ManufacturerController {
 		log.info("Controller existingCarDto:" + existingCarDto);
 		CarDto updatedCarDto = new CarDto (newManufacturer, newModel, newYear, newCategories);
 		log.info("Controller updatedCarDto:" + updatedCarDto);
-	    CarDto patchedCar = carService.updateCar(existingCarDto, updatedCarDto);
-	    log.info("Controller patchedCar:" + patchedCar);
+		CarDto patchedCar = carService.updateCar(existingCarDto, updatedCarDto);
+		log.info("Controller patchedCar:" + patchedCar);
 
-	    return ResponseEntity.ok(patchedCar);
+		return ResponseEntity.ok(patchedCar);
 	}
 
 
 	@DeleteMapping("/{manufacturer}/models/{model}/{year}")
 	public ResponseEntity<Void> deleteCar(
-	        @PathVariable String manufacturer,
-	        @PathVariable String model,
-	        @PathVariable int year) {
+			@PathVariable String manufacturer,
+			@PathVariable String model,
+			@PathVariable int year) {
 
-	    carService.deleteCars(manufacturer, model, year);
+		carService.deleteCars(manufacturer, model, year);
 
-	    return ResponseEntity.noContent().build();
+		return ResponseEntity.noContent().build();
 	}
 }

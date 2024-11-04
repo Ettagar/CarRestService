@@ -10,5 +10,5 @@ public record ManufacturerDto (
 		@NotBlank(message = "Manufacturer Name is required")
 		@Length(max = 40, message = "Max name length is 40")
 		String name
-) {
+		) {
 }

@@ -12,14 +12,14 @@ public class CategoriesTestData {
 
 	public void setUp() {
 		Category category1 = Category.builder()
-		.id(1L)
-		.name("SUV")
-		.build();
+				.id(1L)
+				.name("SUV")
+				.build();
 
 		Category category2 = Category.builder()
-		.id(2L)
-		.name("Sedan")
-		.build();
+				.id(2L)
+				.name("Sedan")
+				.build();
 
 		categories = Arrays.asList(category1, category2);
 	}

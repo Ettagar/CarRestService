@@ -12,19 +12,19 @@ public class ManufacturerTestData {
 
 	public void setUp() {
 		Manufacturer manufacturer1 = Manufacturer.builder()
-		.id(1L)
-		.name("Audi")
-		.build();
+				.id(1L)
+				.name("Audi")
+				.build();
 
 		Manufacturer manufacturer2 = Manufacturer.builder()
-		.id(2L)
-		.name("Mazda")
-		.build();
+				.id(2L)
+				.name("Mazda")
+				.build();
 
 		Manufacturer manufacturer3 = Manufacturer.builder()
-		.id(3L)
-		.name("VW")
-		.build();
+				.id(3L)
+				.name("VW")
+				.build();
 
 		manufacturers = Arrays.asList(manufacturer1, manufacturer2, manufacturer3);
 	}

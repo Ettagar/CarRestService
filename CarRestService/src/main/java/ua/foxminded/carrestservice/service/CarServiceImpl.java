@@ -39,7 +39,7 @@ public class CarServiceImpl implements CarService {
 	public Optional<Car> findById(String id) {
 		if (id == null) {
 			log.error("The carId must not be null");
-            throw new IllegalArgumentException("The carId must not be null");
+			throw new IllegalArgumentException("The carId must not be null");
 		}
 
 		return carRepository.findById(id);
@@ -48,20 +48,20 @@ public class CarServiceImpl implements CarService {
 	@Override
 	@Transactional(readOnly = true)
 	public Optional<CarDto> findOneCar(CarSearchCriteria criteria) {
-	    Specification<Car> spec = Specification.where(
-	            CarSpecification.hasManufacturer(criteria.getManufacturer()))
-	            .and(CarSpecification.hasModel(criteria.getModel()))
-	            .and(CarSpecification.hasYear(criteria.getMinYear(), criteria.getMaxYear()))
-	            .and(CarSpecification.hasCategories(criteria.getCategories()));
+		Specification<Car> spec = Specification.where(
+				CarSpecification.hasManufacturer(criteria.getManufacturer()))
+				.and(CarSpecification.hasModel(criteria.getModel()))
+				.and(CarSpecification.hasYear(criteria.getMinYear(), criteria.getMaxYear()))
+				.and(CarSpecification.hasCategories(criteria.getCategories()));
 
-	    Optional<Car> carOptional = carRepository.findOne(spec);
+		Optional<Car> carOptional = carRepository.findOne(spec);
 
-	    return carOptional.map(carMapper::toDto);
+		return carOptional.map(carMapper::toDto);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-    public Page<CarDto> findAllCarsByCriteria(CarSearchCriteria criteria, Pageable pageable) {
+	public Page<CarDto> findAllCarsByCriteria(CarSearchCriteria criteria, Pageable pageable) {
 		Specification<Car> spec = Specification.where(
 				CarSpecification.hasManufacturer(criteria.getManufacturer()))
 				.and(CarSpecification.hasModel(criteria.getModel()))
@@ -103,11 +103,11 @@ public class CarServiceImpl implements CarService {
 	@Transactional
 	public CarDto createCar(String manufacturerName, String model, Integer year, List<String> categories) {
 		CarSearchCriteria criteria = CarSearchCriteria.builder()
-                .manufacturer(manufacturerName)
-                .model(model)
-                .minYear(year)
-                .maxYear(year)
-                .build();
+				.manufacturer(manufacturerName)
+				.model(model)
+				.minYear(year)
+				.maxYear(year)
+				.build();
 
 		Optional<CarDto> existingCar = findOneCar(criteria);
 		if (existingCar.isPresent()) {
@@ -130,19 +130,19 @@ public class CarServiceImpl implements CarService {
 		return carMapper.toDto(createCar(car));
 	}
 
-    @Override
-    @Transactional
+	@Override
+	@Transactional
 	public CarDto updateCar(CarDto existingCarContext, CarDto updatedCarContext) {
 
-    	CarSearchCriteria criteria = CarSearchCriteria.builder()
-                .manufacturer(existingCarContext.manufacturer())
-                .model(existingCarContext.model())
-                .minYear(existingCarContext.year())
-                .maxYear(existingCarContext.year())
-                .build();
+		CarSearchCriteria criteria = CarSearchCriteria.builder()
+				.manufacturer(existingCarContext.manufacturer())
+				.model(existingCarContext.model())
+				.minYear(existingCarContext.year())
+				.maxYear(existingCarContext.year())
+				.build();
 
-    	CarDto existingCar = findOneCar(criteria)
-	            .orElseThrow(() -> new CarNotFoundException("Car not found"));
+		CarDto existingCar = findOneCar(criteria)
+				.orElseThrow(() -> new CarNotFoundException("Car not found"));
 
 		String updatedManufacturerDto = (updatedCarContext.manufacturer() != null) ?
 				updatedCarContext.manufacturer(): existingCar.manufacturer();
@@ -152,7 +152,7 @@ public class CarServiceImpl implements CarService {
 				updatedCarContext.year() : existingCar.year();
 		List<String> updatedCategoriesDto = (updatedCarContext.categories() != null
 				&& !updatedCarContext.categories().isEmpty()) ?
-				updatedCarContext.categories() : existingCar.categories();
+						updatedCarContext.categories() : existingCar.categories();
 
 		manufacturerService.create(updatedManufacturerDto);
 		Manufacturer updatedManufacturer = manufacturerService.findManufacturerByName(updatedManufacturerDto).get();
@@ -173,17 +173,17 @@ public class CarServiceImpl implements CarService {
 	}
 
 	@Override
-    @Transactional
-    public void deleteCars(String manufacturer, String model, Integer year) {
-        Specification<Car> spec = Specification.where(
-        		CarSpecification.hasManufacturer(manufacturer))
-                .and(CarSpecification.hasModel(model))
-                .and(CarSpecification.hasYear(year, year));
+	@Transactional
+	public void deleteCars(String manufacturer, String model, Integer year) {
+		Specification<Car> spec = Specification.where(
+				CarSpecification.hasManufacturer(manufacturer))
+				.and(CarSpecification.hasModel(model))
+				.and(CarSpecification.hasYear(year, year));
 
-        List<Car> carsToDelete = carRepository.findAll(spec);
+		List<Car> carsToDelete = carRepository.findAll(spec);
 
-        if (!carsToDelete.isEmpty()) {
-            carRepository.deleteAll(carsToDelete);
-        }
-    }
+		if (!carsToDelete.isEmpty()) {
+			carRepository.deleteAll(carsToDelete);
+		}
+	}
 }
