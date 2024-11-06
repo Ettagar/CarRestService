@@ -92,14 +92,14 @@ class ManufacturerControllerTest {
 		String expectedJson = objectMapper.writeValueAsString(expectedPage);
 
 		when(manufacturerService.findAll(any(Pageable.class)))
-			.thenReturn(new PageImpl<>(manufacturerDtos, pageable,manufacturerDtos.size()));
+		.thenReturn(new PageImpl<>(manufacturerDtos, pageable,manufacturerDtos.size()));
 
 		mockMvc.perform(get(END_POINT_PATH)
 				.param("page", String.valueOf(PAGE_NUMBER))
 				.param("size", String.valueOf(PAGE_SIZE)))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/json"))
-				.andExpect(content().json(expectedJson));
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(content().json(expectedJson));
 	}
 
 	@Test
@@ -111,13 +111,13 @@ class ManufacturerControllerTest {
 		String expectedJson = objectMapper.writeValueAsString(createdManufacturerDto);
 
 		when(manufacturerService.create(manufacturerName))
-				.thenReturn(createdManufacturerDto);
+		.thenReturn(createdManufacturerDto);
 
 		mockMvc.perform(post(END_POINT_PATH)
 				.param("manufacturerName", manufacturerName))
-				.andExpect(status().isCreated())
-				.andExpect(content().contentType("application/json"))
-				.andExpect(content().json(expectedJson));
+		.andExpect(status().isCreated())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(content().json(expectedJson));
 	}
 
 	@Test
@@ -125,22 +125,22 @@ class ManufacturerControllerTest {
 		String manufacturerName = "Audi";
 
 		when(manufacturerService.create(manufacturerName))
-				.thenThrow(	new ManufacturerAlreadyExistsException
-						("Manufacturer already exists with name: " + manufacturerName));
+		.thenThrow(	new ManufacturerAlreadyExistsException
+				("Manufacturer already exists with name: " + manufacturerName));
 
 		mockMvc.perform(post(END_POINT_PATH)
 				.param("manufacturerName", manufacturerName))
-				.andExpect(status().isConflict());
+		.andExpect(status().isConflict());
 	}
 
 	@Test
 	void testCreateManufacturerIfEmpty() throws Exception {
 		when(manufacturerService.create(""))
-				.thenThrow(new ManufacturerInvalidException("Manufacturer name is invalid"));
+		.thenThrow(new ManufacturerInvalidException("Manufacturer name is invalid"));
 
 		mockMvc.perform(post(END_POINT_PATH)
 				.param("manufacturerName", ""))
-				.andExpect(status().isBadRequest());
+		.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -152,13 +152,13 @@ class ManufacturerControllerTest {
 		String expectedJson = objectMapper.writeValueAsString(updatedManufacturerDto);
 
 		when(manufacturerService.updateName(manufacturerName, manufacturerNewName))
-				.thenReturn(updatedManufacturerDto);
+		.thenReturn(updatedManufacturerDto);
 
 		mockMvc.perform(put(END_POINT_PATH + "/{manufacturerName}", manufacturerName)
 				.param("manufacturerNewName", manufacturerNewName))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/json"))
-				.andExpect(content().json(expectedJson));
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(content().json(expectedJson));
 	}
 
 	@Test
@@ -167,11 +167,11 @@ class ManufacturerControllerTest {
 		String manufacturerNewName = "";
 
 		when(manufacturerService.updateName(manufacturerName, manufacturerNewName))
-				.thenThrow(new ManufacturerInvalidException("Manufacturer name is invalid"));
+		.thenThrow(new ManufacturerInvalidException("Manufacturer name is invalid"));
 
 		mockMvc.perform(put(END_POINT_PATH + "/{manufacturerName}", manufacturerName)
 				.param("manufacturerNewName", manufacturerNewName))
-				.andExpect(status().isBadRequest());
+		.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -181,8 +181,8 @@ class ManufacturerControllerTest {
 		doNothing().when(manufacturerService).delete(manufacturerName);
 
 		mockMvc.perform(delete(END_POINT_PATH + "/{manufacturerName}", manufacturerName))
-				.andExpect(status().isOk())
-				.andExpect(content().string("Manufacturer '" + manufacturerName + "' deleted successfully"));
+		.andExpect(status().isOk())
+		.andExpect(content().string("Manufacturer '" + manufacturerName + "' deleted successfully"));
 	}
 
 	@Test
@@ -190,10 +190,10 @@ class ManufacturerControllerTest {
 		String manufacturerName = "NonExistent";
 
 		doThrow(new ManufacturerNotFoundException("Manufacturer does not exist with name: " + manufacturerName))
-				.when(manufacturerService).delete(manufacturerName);
+		.when(manufacturerService).delete(manufacturerName);
 
 		mockMvc.perform(delete(END_POINT_PATH + "/{manufacturerName}", manufacturerName))
-				.andExpect(status().isNotFound());
+		.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -211,14 +211,14 @@ class ManufacturerControllerTest {
 		String expectedJson = objectMapper.writeValueAsString(expectedPage);
 
 		when(carService.findAllCarsByCriteria(any(CarSearchCriteria.class), eq(pageable)))
-				.thenReturn(expectedPage);
+		.thenReturn(expectedPage);
 
 		mockMvc.perform(get(END_POINT_PATH + "/" + manufacturerName + "/models")
 				.param("page", PAGE_NUMBER.toString())
 				.param("size",PAGE_SIZE.toString()))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/json"))
-				.andExpect(content().json(expectedJson));
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(content().json(expectedJson));
 	}
 
 	@Test
@@ -232,12 +232,12 @@ class ManufacturerControllerTest {
 				expectedCarDto.categories()))
 		.thenReturn(expectedCarDto);
 
-	    mockMvc.perform(post(END_POINT_PATH + "/" + expectedCarDto.manufacturer() + "/models")
-                .param("model", expectedCarDto.model())
-                .param("year", expectedCarDto.year().toString())
-                .param("categories", expectedCarDto.categories().get(0)))
-                .andExpect(status().isCreated())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedCarDto)));
+		mockMvc.perform(post(END_POINT_PATH + "/" + expectedCarDto.manufacturer() + "/models")
+				.param("model", expectedCarDto.model())
+				.param("year", expectedCarDto.year().toString())
+				.param("categories", expectedCarDto.categories().get(0)))
+		.andExpect(status().isCreated())
+		.andExpect(content().json(objectMapper.writeValueAsString(expectedCarDto)));
 	}
 
 	@Test
@@ -251,15 +251,15 @@ class ManufacturerControllerTest {
 		String expectedJson = objectMapper.writeValueAsString(expectedPage);
 
 		when(carService.findAllCarsByCriteria(any(CarSearchCriteria.class), eq(pageable)))
-				.thenReturn(expectedPage);
+		.thenReturn(expectedPage);
 
 		mockMvc.perform(get(END_POINT_PATH + "/" + carDtos.get(0).manufacturer()
 				+ "/models/" + carDtos.get(0).model() + "/" + carDtos.get(0).year())
 				.param("page", PAGE_NUMBER.toString())
 				.param("size",PAGE_SIZE.toString()))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/json"))
-				.andExpect(content().json(expectedJson));
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(content().json(expectedJson));
 	}
 
 	@Test
@@ -273,11 +273,11 @@ class ManufacturerControllerTest {
 				expectedCarDto.categories()))
 		.thenReturn(expectedCarDto);
 
-	    mockMvc.perform(post(END_POINT_PATH + "/" + expectedCarDto.manufacturer()
-	    	+ "/models/" + expectedCarDto.model() + "/" + expectedCarDto.year())
-                .param("categories", expectedCarDto.categories().get(0)))
-                .andExpect(status().isCreated())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedCarDto)));
+		mockMvc.perform(post(END_POINT_PATH + "/" + expectedCarDto.manufacturer()
+		+ "/models/" + expectedCarDto.model() + "/" + expectedCarDto.year())
+				.param("categories", expectedCarDto.categories().get(0)))
+		.andExpect(status().isCreated())
+		.andExpect(content().json(objectMapper.writeValueAsString(expectedCarDto)));
 	}
 
 	@Test
@@ -293,15 +293,15 @@ class ManufacturerControllerTest {
 				updatedCarDto.categories());
 
 		when(carService.updateCar(any(CarDto.class), any(CarDto.class)))
-			.thenReturn(expectedCarDto);
+		.thenReturn(expectedCarDto);
 
-	    mockMvc.perform(patch(END_POINT_PATH + "/" + existingCarDto.manufacturer()
-	    	+ "/models/" + existingCarDto.model() + "/" + existingCarDto.year())
-                .param("newManufacturer", updatedCarDto.manufacturer())
-                .param("newModel", updatedCarDto.model())
-                .param("newYear", updatedCarDto.year().toString())
-                .param("newCategories", updatedCarDto.categories().toArray(new String[0])))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedCarDto)));
+		mockMvc.perform(patch(END_POINT_PATH + "/" + existingCarDto.manufacturer()
+		+ "/models/" + existingCarDto.model() + "/" + existingCarDto.year())
+				.param("newManufacturer", updatedCarDto.manufacturer())
+				.param("newModel", updatedCarDto.model())
+				.param("newYear", updatedCarDto.year().toString())
+				.param("newCategories", updatedCarDto.categories().toArray(new String[0])))
+		.andExpect(status().isOk())
+		.andExpect(content().json(objectMapper.writeValueAsString(expectedCarDto)));
 	}
 }

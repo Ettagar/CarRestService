@@ -45,16 +45,16 @@ public class CategoryService {
 
 	@Transactional
 	public List<Category> findByName(List<String> categoriesNames) {
-        if (categoriesNames == null || categoriesNames.isEmpty()) {
-            throw new IllegalArgumentException("categories names list must not be null or empty");
-        }
+		if (categoriesNames == null || categoriesNames.isEmpty()) {
+			throw new IllegalArgumentException("categories names list must not be null or empty");
+		}
 
-        return categoriesNames.stream()
-        		 .map(this::findByName)
-                 .filter(Optional::isPresent)
-                 .map(Optional::get)
-                 .collect(Collectors.toList());
-    }
+		return categoriesNames.stream()
+				.map(this::findByName)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(Collectors.toList());
+	}
 
 	private void validateCategoryName(String categoryName) {
 		if (categoryName == null) {

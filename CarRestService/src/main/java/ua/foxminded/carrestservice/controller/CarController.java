@@ -24,25 +24,25 @@ public class CarController {
 
 	@GetMapping
 	public Page<CarDto> searchCars(
-	        @RequestParam(required = false) String manufacturer,
-	        @RequestParam(required = false) String model,
-	        @RequestParam(required = false) Integer minYear,
-	        @RequestParam(required = false) Integer maxYear,
-	        @RequestParam(required = false) List<String> categories,
-	        @RequestParam(required = false, defaultValue = "model") String sortBy,
-            @RequestParam(required = false, defaultValue = "ASC") String sortDirection,
-	        Pageable pageable) {
+			@RequestParam(required = false) String manufacturer,
+			@RequestParam(required = false) String model,
+			@RequestParam(required = false) Integer minYear,
+			@RequestParam(required = false) Integer maxYear,
+			@RequestParam(required = false) List<String> categories,
+			@RequestParam(required = false, defaultValue = "model") String sortBy,
+			@RequestParam(required = false, defaultValue = "ASC") String sortDirection,
+			Pageable pageable) {
 
 		Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
 		Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
 		CarSearchCriteria criteria = CarSearchCriteria.builder()
-		        .manufacturer(manufacturer)
-		        .model(model)
-		        .minYear(minYear)
-		        .maxYear(maxYear)
-		        .categories(categories)
-		        .build();
+				.manufacturer(manufacturer)
+				.model(model)
+				.minYear(minYear)
+				.maxYear(maxYear)
+				.categories(categories)
+				.build();
 
 		return carService.findAllCarsByCriteria(criteria, sortedPageable);
 	}

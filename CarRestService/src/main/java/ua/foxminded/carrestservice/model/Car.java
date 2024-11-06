@@ -25,25 +25,25 @@ import lombok.NoArgsConstructor;
 @Table(name = "cars")
 public class Car {
 
-    @Id
-    private String id;
+	@Id
+	private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "make", referencedColumnName = "id",
-    		nullable = false)
-    private Manufacturer manufacturer;
+	@ManyToOne
+	@JoinColumn(name = "make", referencedColumnName = "id",
+	nullable = false)
+	private Manufacturer manufacturer;
 
-    @Column(nullable = false)
-    private String model;
+	@Column(nullable = false)
+	private String model;
 
-    @Column(nullable = false)
-    private Integer year;
+	@Column(nullable = false)
+	private Integer year;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-                cascade = { CascadeType.DETACH, CascadeType.MERGE,
-                            CascadeType.PERSIST, CascadeType.REFRESH })
-    @JoinTable(name = "cars_categories",
-    			joinColumns = @JoinColumn(name = "car_id"),
-    			inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private List<Category> categories;
+	@ManyToMany(fetch = FetchType.LAZY,
+			cascade = { CascadeType.DETACH, CascadeType.MERGE,
+					CascadeType.PERSIST, CascadeType.REFRESH })
+	@JoinTable(name = "cars_categories",
+	joinColumns = @JoinColumn(name = "car_id"),
+	inverseJoinColumns = @JoinColumn(name = "category_id"))
+	private List<Category> categories;
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import ua.foxminded.carrestservice.model.Car;
 import ua.foxminded.carrestservice.model.Category;
 import ua.foxminded.carrestservice.model.Manufacturer;
+import ua.foxminded.carrestservice.model.dto.CarDto;
 
 @Getter
 public class ApplicationTestData {
@@ -14,6 +15,7 @@ public class ApplicationTestData {
 	private final CarTestData carTestData = new CarTestData(manufacturerTestData, categoriesTestData);
 
 	private List<Car> cars;
+	private List<CarDto> carDtos;
 	private List<Manufacturer> manufacturers;
 	private List<Category> categories;
 
@@ -26,5 +28,6 @@ public class ApplicationTestData {
 
 		carTestData.setUp();
 		cars = carTestData.getCars();
+		carDtos = carTestData.getCarDtos();
 	}
 }

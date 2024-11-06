@@ -26,14 +26,14 @@ import lombok.NonNull;
 public class Category {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@NonNull
-    @Column(nullable = false)
-    private String name;
+	@Column(nullable = false)
+	private String name;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "categories")
-    private List<Car> cars;
+	@JsonIgnore
+	@ManyToMany(mappedBy = "categories")
+	private List<Car> cars;
 }

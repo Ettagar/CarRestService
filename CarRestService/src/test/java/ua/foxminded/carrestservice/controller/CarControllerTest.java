@@ -66,7 +66,7 @@ class CarControllerTest {
 		List<CarDto> carDtos = carMapper.toDtoList(testData.getCars());
 
 		when(carService.findAllCarsByCriteria(any(CarSearchCriteria.class), eq(pageable)))
-				.thenReturn(new PageImpl<>(carDtos, pageable, carDtos.size()));
+		.thenReturn(new PageImpl<>(carDtos, pageable, carDtos.size()));
 
 
 		Page<CarDto> expectedPage = new PageImpl<>(carDtos, pageable, carDtos.size());
@@ -77,9 +77,9 @@ class CarControllerTest {
 				.param("size", String.valueOf(PAGE_SIZE))
 				.param("sortBy", "model")
 				.param("sortDirection", "ASC"))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType("application/json"))
-			.andExpect(content().json(expectedJson));
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(content().json(expectedJson));
 	}
 
 	@Test
@@ -92,14 +92,14 @@ class CarControllerTest {
 
 		List<CarDto> cars = carMapper.toDtoList(
 				testData.getCars().stream()
-					.filter(car -> car.getManufacturer().getName().equals(manufacturer)
-								&& car.getYear() <= maxYear)
-					.collect(Collectors.toList())
-		);
+				.filter(car -> car.getManufacturer().getName().equals(manufacturer)
+						&& car.getYear() <= maxYear)
+				.collect(Collectors.toList())
+				);
 		Page<CarDto> expectedPage = new PageImpl<>(cars, pageable, cars.size());
 
 		when(carService.findAllCarsByCriteria(any(CarSearchCriteria.class), eq(pageable)))
-				.thenReturn(expectedPage);
+		.thenReturn(expectedPage);
 		String expectedJson = objectMapper.writeValueAsString(expectedPage);
 
 		mockMvc.perform(get(END_POINT_PATH)
@@ -109,8 +109,8 @@ class CarControllerTest {
 				.param("sortDirection", "ASC")
 				.param("manufacturer", manufacturer)
 				.param("maxYear", String.valueOf(maxYear)))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType("application/json"))
-			.andExpect(content().json(expectedJson));
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(content().json(expectedJson));
 	}
 }

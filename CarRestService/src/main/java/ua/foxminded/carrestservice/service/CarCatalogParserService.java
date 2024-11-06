@@ -32,38 +32,38 @@ public class CarCatalogParserService {
 	private final CarServiceImpl carServiceImpl;
 
 	@Transactional
-    public void parseDataFromCsv() {
-        List<Car> cars = new ArrayList<>();
-        log.info("Filename = " + fileName);
-        try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(fileName).getInputStream()))) {
-            List<String[]> records = reader.readAll();
-            for (int i = 1; i < records.size() - 1; i++) {
-                String[] recordLine = records.get(i);
-                Car car = new Car();
-                car.setId(recordLine[0]);
-        		manufacturerService.create(recordLine[1]);
-        		car.setManufacturer(manufacturerService.findManufacturerByName(recordLine[1]).get());
-                car.setYear(Integer.parseInt(recordLine[2]));
-                car.setModel(recordLine[3]);
+	public void parseDataFromCsv() {
+		List<Car> cars = new ArrayList<>();
+		log.info("Filename = " + fileName);
+		try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(fileName).getInputStream()))) {
+			List<String[]> records = reader.readAll();
+			for (int i = 1; i < records.size() - 1; i++) {
+				String[] recordLine = records.get(i);
+				Car car = new Car();
+				car.setId(recordLine[0]);
+				manufacturerService.create(recordLine[1]);
+				car.setManufacturer(manufacturerService.findManufacturerByName(recordLine[1]).get());
+				car.setYear(Integer.parseInt(recordLine[2]));
+				car.setModel(recordLine[3]);
 
-                String[] categoriesArray = recordLine[4].split(",\\s*");
-                List<Category> categories = new ArrayList<>();
-                for (String categoryName : categoriesArray) {
-                	categoryName = categoryName.replaceAll("\\d", "");
-                	Optional<Category> category = categoryService.findByName(categoryName);
-                		if (category.isEmpty()) {
-                			category = Optional.of(categoryService.createCategory(categoryName));
-                		}
-                    categories.add(category.get());
-                }
-                car.setCategories(categories);
+				String[] categoriesArray = recordLine[4].split(",\\s*");
+				List<Category> categories = new ArrayList<>();
+				for (String categoryName : categoriesArray) {
+					categoryName = categoryName.replaceAll("\\d", "");
+					Optional<Category> category = categoryService.findByName(categoryName);
+					if (category.isEmpty()) {
+						category = Optional.of(categoryService.createCategory(categoryName));
+					}
+					categories.add(category.get());
+				}
+				car.setCategories(categories);
 
-                cars.add(car);
-                log.info("Parsed: {}", car);
-            }
-        } catch (Exception e ) {
-            e.printStackTrace();
-        }
-       carServiceImpl.createCars(cars);
-    }
+				cars.add(car);
+				log.info("Parsed: {}", car);
+			}
+		} catch (Exception e ) {
+			e.printStackTrace();
+		}
+		carServiceImpl.createCars(cars);
+	}
 }

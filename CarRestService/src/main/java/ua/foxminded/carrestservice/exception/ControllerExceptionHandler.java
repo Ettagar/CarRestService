@@ -55,17 +55,17 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();
-	    ex.getBindingResult().getFieldErrors()
-	        .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+		ex.getBindingResult().getFieldErrors()
+		.forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
-	    Map<String, Object> body = new LinkedHashMap<>();
-	    body.put("timestamp", LocalDateTime.now());
-	    body.put("status", HttpStatus.BAD_REQUEST.value());
-	    body.put("error", "Validation Failed");
-	    body.put("message", "Invalid input");
-	    body.put("errors", errors);
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("status", HttpStatus.BAD_REQUEST.value());
+		body.put("error", "Validation Failed");
+		body.put("message", "Invalid input");
+		body.put("errors", errors);
 
-	    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(MissingServletRequestParameterException.class)
