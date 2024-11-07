@@ -28,10 +28,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ua.foxminded.carrestservice.configuration.SecurityConfig;
 import ua.foxminded.carrestservice.exception.manufacturer.ManufacturerAlreadyExistsException;
 import ua.foxminded.carrestservice.exception.manufacturer.ManufacturerInvalidException;
 import ua.foxminded.carrestservice.exception.manufacturer.ManufacturerNotFoundException;
@@ -49,7 +51,7 @@ import ua.foxminded.carrestservice.service.ManufacturerService;
 import ua.foxminded.carrestservice.util.ApplicationTestData;
 
 @WebMvcTest(controllers = ManufacturerController.class)
-@Import({ ApplicationTestData.class, ManufacturerMapperImpl.class, CarMapperImpl.class})
+@Import({ ApplicationTestData.class, ManufacturerMapperImpl.class, CarMapperImpl.class, SecurityConfig.class})
 class ManufacturerControllerTest {
 	private static final String END_POINT_PATH = ("/api/v1/manufacturers");
 	private static final Integer PAGE_NUMBER = 0;
@@ -103,6 +105,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testCreateManufacturer() throws Exception {
 		String manufacturerName = "Seat";
 
@@ -121,6 +124,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testCreateManufacturerIfAlreadyExist() throws Exception {
 		String manufacturerName = "Audi";
 
@@ -134,6 +138,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testCreateManufacturerIfEmpty() throws Exception {
 		when(manufacturerService.create(""))
 		.thenThrow(new ManufacturerInvalidException("Manufacturer name is invalid"));
@@ -144,6 +149,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testUpdateManufacturerName() throws Exception {
 		String manufacturerName = "Audi";
 		String manufacturerNewName = "Oudi";
@@ -162,6 +168,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testUpdateManufacturerNameToEmpty() throws Exception {
 		String manufacturerName = "Audi";
 		String manufacturerNewName = "";
@@ -175,6 +182,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testDeleteManufacturer() throws Exception {
 		String manufacturerName = "Audi";
 
@@ -186,6 +194,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testDeleteNonExistentManufacturer() throws Exception {
 		String manufacturerName = "NonExistent";
 
@@ -222,6 +231,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testCreateCarForManufacturer() throws Exception {
 		CarDto expectedCarDto = carMapper.toDto(testData.getCars().get(0));
 
@@ -263,6 +273,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testCreateCarForManufacturerWithModelAndYear() throws Exception {
 		CarDto expectedCarDto = carMapper.toDto(testData.getCars().get(0));
 
@@ -281,6 +292,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "testUser", roles = "USER")
 	void testPatchCarManufacturerAndModelAndYearAndCategories() throws Exception {
 		CarDto existingCarDto =  carMapper.toDto(testData.getCars().get(0));
 		CarDto updatedCarDto = carMapper.toDto(testData.getCars().get(1));

@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ua.foxminded.carrestservice.configuration.SecurityConfig;
 import ua.foxminded.carrestservice.mapper.CarMapper;
 import ua.foxminded.carrestservice.mapper.CarMapperImpl;
 import ua.foxminded.carrestservice.model.CarSearchCriteria;
@@ -33,7 +34,7 @@ import ua.foxminded.carrestservice.service.CarService;
 import ua.foxminded.carrestservice.util.ApplicationTestData;
 
 @WebMvcTest(controllers = CarController.class)
-@Import({ApplicationTestData.class, CarMapperImpl.class})
+@Import({ApplicationTestData.class, CarMapperImpl.class, SecurityConfig.class})
 class CarControllerTest {
 	private static final String END_POINT_PATH = ("/api/v1/cars");
 	private static final Integer PAGE_NUMBER = 0;
