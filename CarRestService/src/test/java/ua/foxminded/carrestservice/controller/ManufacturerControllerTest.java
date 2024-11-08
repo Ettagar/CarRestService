@@ -105,7 +105,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testCreateManufacturer() throws Exception {
 		String manufacturerName = "Seat";
 
@@ -124,7 +124,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testCreateManufacturerIfAlreadyExist() throws Exception {
 		String manufacturerName = "Audi";
 
@@ -138,7 +138,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testCreateManufacturerIfEmpty() throws Exception {
 		when(manufacturerService.create(""))
 		.thenThrow(new ManufacturerInvalidException("Manufacturer name is invalid"));
@@ -149,7 +149,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testUpdateManufacturerName() throws Exception {
 		String manufacturerName = "Audi";
 		String manufacturerNewName = "Oudi";
@@ -168,7 +168,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testUpdateManufacturerNameToEmpty() throws Exception {
 		String manufacturerName = "Audi";
 		String manufacturerNewName = "";
@@ -182,7 +182,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testDeleteManufacturer() throws Exception {
 		String manufacturerName = "Audi";
 
@@ -194,7 +194,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testDeleteNonExistentManufacturer() throws Exception {
 		String manufacturerName = "NonExistent";
 
@@ -231,7 +231,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser",authorities = "write:cars")
 	void testCreateCarForManufacturer() throws Exception {
 		CarDto expectedCarDto = carMapper.toDto(testData.getCars().get(0));
 
@@ -273,7 +273,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testCreateCarForManufacturerWithModelAndYear() throws Exception {
 		CarDto expectedCarDto = carMapper.toDto(testData.getCars().get(0));
 
@@ -292,7 +292,7 @@ class ManufacturerControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "testUser", roles = "USER")
+	@WithMockUser(username = "testUser", authorities = "write:cars")
 	void testPatchCarManufacturerAndModelAndYearAndCategories() throws Exception {
 		CarDto existingCarDto =  carMapper.toDto(testData.getCars().get(0));
 		CarDto updatedCarDto = carMapper.toDto(testData.getCars().get(1));
