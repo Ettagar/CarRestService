@@ -23,7 +23,7 @@ public class SecurityConfig {
 		http
 		.csrf(csrf -> csrf.disable())
 		.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs.yaml").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/v1/**").hasAuthority("write:cars")
 				.requestMatchers(HttpMethod.PUT, "/api/v1/**").hasAuthority("write:cars")

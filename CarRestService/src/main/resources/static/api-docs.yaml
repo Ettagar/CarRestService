@@ -1,0 +1,573 @@
+openapi: 3.1.0
+info:
+  title: Car REST Service API
+  version: "1.0"
+  description: API for searching, managing cars, and handling manufacturers.
+  contact:
+    name: Serhii Kuznietsov
+    email: serhii.kuznietsov.work@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+
+servers:
+  - url: /
+    description: Default Server URL
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v1/cars:
+    get:
+      summary: Search for cars by criteria
+      description: Allows searching for cars based on manufacturer, model, year range, categories, and sorting options.
+      tags:
+        - Cars
+      security: []
+      parameters:
+        - name: manufacturer
+          in: query
+          schema:
+            type: string
+          description: Manufacturer name to filter cars
+        - name: model
+          in: query
+          schema:
+            type: string
+          description: Model name to filter cars
+        - name: minYear
+          in: query
+          schema:
+            type: integer
+          description: Minimum manufacture year
+        - name: maxYear
+          in: query
+          schema:
+            type: integer
+          description: Maximum manufacture year
+        - name: categories
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: List of categories to filter cars
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            default: model
+          description: Field to sort the results by model, year, etc.
+        - name: sortDirection
+          in: query
+          schema:
+            type: string
+            enum: [ASC, DESC]
+            default: ASC
+          description: Sorting direction, ASC or DESC
+      responses:
+        "200":
+          description: Cars found based on search criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarDto'
+        "400":
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "404":
+          description: Car not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/manufacturers:
+    get:
+      summary: Get all manufacturers
+      description: Retrieves a paginated list of all manufacturers.
+      tags:
+        - Manufacturers
+      security: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+          description: Page number for pagination
+        - name: size
+          in: query
+          schema:
+            type: integer
+          description: Number of items per page
+      responses:
+        "200":
+          description: List of manufacturers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ManufacturerDto'
+
+    post:
+      summary: Create a manufacturer
+      description: Creates a new manufacturer.
+      tags:
+        - Manufacturers
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                manufacturerName:
+                  type: string
+                  description: Name of the manufacturer
+      responses:
+        "201":
+          description: Manufacturer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManufacturerDto'
+        "400":
+          description: Manufacturer already exists or invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/manufacturers/{manufacturer}/models:
+    get:
+      summary: Get all cars by manufacturer
+      description: Retrieves a paginated list of cars by the specified manufacturer.
+      tags:
+        - Cars
+      security: []
+      parameters:
+        - name: manufacturer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Manufacturer name to filter cars
+        - name: page
+          in: query
+          schema:
+            type: integer
+          description: Page number for pagination
+        - name: size
+          in: query
+          schema:
+            type: integer
+          description: Number of items per page
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            default: model
+          description: Field to sort by
+        - name: sortDirection
+          in: query
+          schema:
+            type: string
+            enum: [ASC, DESC]
+            default: ASC
+          description: Sorting direction
+      responses:
+        "200":
+          description: List of cars by manufacturer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarDto'
+        "404":
+          description: Manufacturer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Create a car for a manufacturer
+      description: Creates a new car entry for the specified manufacturer.
+      tags:
+        - Cars
+      parameters:
+        - name: manufacturer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Manufacturer name to create the car under
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                  description: Model name of the car
+                year:
+                  type: integer
+                  description: Manufacture year of the car
+                categories:
+                  type: array
+                  items:
+                    type: string
+                  description: List of categories the car belongs to
+      responses:
+        "201":
+          description: Car created for manufacturer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDto'
+        "400":
+          description: Invalid input or manufacturer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "409":
+          description: Car with the given specifications already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/manufacturers/{manufacturer}/models/{model}:
+    get:
+      summary: Get all cars by manufacturer and model
+      description: Retrieves a paginated list of cars for a specific manufacturer and model.
+      tags:
+        - Cars
+      security: []
+      parameters:
+        - name: manufacturer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Manufacturer name
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Model name
+        - name: page
+          in: query
+          schema:
+            type: integer
+          description: Page number for pagination
+        - name: size
+          in: query
+          schema:
+            type: integer
+          description: Number of items per page
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            default: year
+          description: Field to sort by
+        - name: sortDirection
+          in: query
+          schema:
+            type: string
+            enum: [ASC, DESC]
+            default: ASC
+          description: Sorting direction
+      responses:
+        "200":
+          description: List of cars by manufacturer and model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarDto'
+        "404":
+          description: Car not found for specified manufacturer and model
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/manufacturers/{manufacturer}/models/{model}/{year}:
+    get:
+      summary: Get car by manufacturer, model, and year
+      description: Retrieves a car by manufacturer, model, and specific year.
+      tags:
+        - Cars
+      security: []
+      parameters:
+        - name: manufacturer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Manufacturer name
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Model name
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Manufacture year
+      responses:
+        "200":
+          description: Car details for specified manufacturer, model, and year
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDto'
+        "404":
+          description: Car not found for specified manufacturer, model, and year
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Create car with model and year for a manufacturer
+      description: Creates a new car entry for a specified manufacturer, model, and year.
+      tags:
+        - Cars
+      parameters:
+        - name: manufacturer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Manufacturer name
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Model name
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Manufacture year
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                categories:
+                  type: array
+                  items:
+                    type: string
+                  description: List of categories
+      responses:
+        "201":
+          description: Car created for manufacturer, model, and year
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDto'
+        "400":
+          description: Invalid input or manufacturer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "409":
+          description: Car with the given specifications already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      summary: Update car details by manufacturer, model, and year
+      description: Partially updates the car's details by the specified manufacturer, model, and year.
+      tags:
+        - Cars
+      parameters:
+        - name: manufacturer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Current manufacturer name
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Current model name
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Manufacture year
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                newManufacturer:
+                  type: string
+                  description: Updated manufacturer name
+                newModel:
+                  type: string
+                  description: Updated model name
+                newYear:
+                  type: integer
+                  description: Updated manufacture year
+                newCategories:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated categories list
+      responses:
+        "200":
+          description: Car details updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDto'
+        "404":
+          description: Car not found for specified criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete car by manufacturer, model, and year
+      description: Deletes a car based on the specified manufacturer, model, and year.
+      tags:
+        - Cars
+      parameters:
+        - name: manufacturer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Manufacturer name
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Model name
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Manufacture year
+      responses:
+        "204":
+          description: Car deleted
+        "404":
+          description: Car not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    
+  schemas:
+    CarDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+          description: Unique identifier of the car
+        manufacturer:
+          type: string
+          description: Manufacturer of the car
+          minLength: 1
+          example: "Toyota"
+        model:
+          type: string
+          description: Model name of the car
+          maxLength: 40
+          example: "Corolla"
+        year:
+          type: integer
+          description: Manufacture year of the car, must be greater than 1885
+          minimum: 1886
+          example: 2021
+        categories:
+          type: array
+          description: Categories the car belongs to
+          minItems: 1
+          items:
+            type: string
+          example: ["SUV", "Electric"]
+      required:
+        - manufacturer
+        - model
+        - year
+        - categories
+
+    ManufacturerDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+          description: Unique identifier of the manufacturer
+        name:
+          type: string
+          description: Name of the manufacturer
+          maxLength: 40
+          example: "Ford"
+      required:
+        - name
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+        details:
+          type: array
+          items:
+            type: string
+          description: Additional error details
+  
