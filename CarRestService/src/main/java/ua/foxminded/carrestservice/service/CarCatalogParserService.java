@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ import ua.foxminded.carrestservice.model.Category;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Profile("!test")
 public class CarCatalogParserService {
 
 	@Value("${file.path.carscatalog}")

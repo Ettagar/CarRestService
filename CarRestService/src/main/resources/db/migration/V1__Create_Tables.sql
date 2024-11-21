@@ -1,15 +1,3 @@
--- Drop all existing tables if they exist
-DROP TABLE IF EXISTS cars_catalog.cars_categories CASCADE;
-DROP TABLE IF EXISTS cars_catalog.cars CASCADE;
-DROP TABLE IF EXISTS cars_catalog.categories CASCADE;
-DROP TABLE IF EXISTS cars_catalog.manufacturers CASCADE;
-
--- Drop all existing sequences if they exist
-DROP SEQUENCE IF EXISTS cars_catalog.category_id_seq CASCADE;
-
--- Create schema
-CREATE SCHEMA IF NOT EXISTS cars_catalog AUTHORIZATION cars_manager;
-
 -- Create the Manufacturers table
 CREATE TABLE IF NOT EXISTS cars_catalog.manufacturers (
     id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 START 1),

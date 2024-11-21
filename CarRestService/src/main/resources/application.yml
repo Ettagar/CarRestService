@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: CarRestService
+
+  datasource:
+    url: jdbc:postgresql://db:5432/cars_database?currentSchema=cars_catalog
+    username: cars_manager
+    password: 12345
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    enabled: true
+    cleanDisabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: validate
+        format_sql: true
+        jdbc.batch_size: 20
+        order_inserts: true
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    default-schema: cars_catalog
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-7tiizasg4a83al2v.us.auth0.com/
+
+  doc:
+    api-docs:
+      path: /v3/api-docs
+    swagger-ui:
+      enabled: true
+      url: /api-docs.yaml
+
+logging:
+  level:
+    sql: error
+    root: info
+    org.springframework.boot.context.properties: DEBUG
+  file:
+    name: logs/application.log
+  pattern:
+    console: ""
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 10
+
+file:
+  path:
+    carscatalog: static/file.csv
+
+server:
+  port: 8080
+
+auth0:
+  audience: https://car-rest-service.com
+  domain: dev-7tiizasg4a83al2v.us.auth0.com
+  clientId: 64MvQ6cgEtLYtmNvtAKw5JE8iEc1zogn
+  clientSecret: yVIxktrYQSTEGPjevIB1M4eyBoQBRaRKo8C5h13xMyZsfDBsA6f-sbgPn8dltMlY
