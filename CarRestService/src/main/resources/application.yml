@@ -40,9 +40,10 @@ spring:
 
 logging:
   level:
-    sql: error
-    root: info
-    org.springframework.boot.context.properties: DEBUG
+    root: DEBUG
+    org.springframework: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   file:
     name: logs/application.log
   pattern:
