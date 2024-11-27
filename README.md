@@ -21,6 +21,8 @@
 - Spring Boot
 - Spring Data JPA
 - Spring Security
+- Spring MVC
+- OAuth 2.0
 
 ### API Documentation
 - OpenAPI (YAML-based)
@@ -31,7 +33,8 @@
 ### Additional Tools
 - Docker & Docker Compose
 - Flyway
-- JUnit, Mockito
+- JUnit, Mockito, Testcontainers
 - Jacoco, SonarQube
+- Mapstruct, Lombok
 
 ---
